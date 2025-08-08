@@ -3,11 +3,13 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import gdown
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 from imblearn.over_sampling import SMOTE
 import joblib
+import os
 
 # --- App Title & Banner ---
 st.set_page_config(page_title="Credit Card Fraud Detection", page_icon="💳", layout="wide")
@@ -15,10 +17,17 @@ st.image("https://i.ibb.co/m0X0G6g/fraud-detection-banner.jpg", use_column_width
 st.title("💳 Credit Card Fraud Detection System")
 st.markdown("An interactive tool to detect fraudulent transactions in real time.")
 
-# --- Load Data ---
+# --- Download & Load Data ---
 @st.cache_data
 def load_data():
-    df = pd.read_csv("/content/drive/MyDrive/firstproject/creditcard.csv")
+    file_id = "1yQngjAiMjgLNUGhwxYTUXHrC2NEVQxkx"  # from your link
+    url = f"https://drive.google.com/uc?id={file_id}"
+    output = "creditcard.csv"
+
+    if not os.path.exists(output):
+        gdown.download(url, output, quiet=False)
+
+    df = pd.read_csv(output)
     column_mapping = {f"V{i}": f"Feature_{i}" for i in range(1, 29)}
     df.rename(columns=column_mapping, inplace=True)
     return df
